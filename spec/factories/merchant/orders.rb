@@ -2,5 +2,6 @@
 
 FactoryBot.define do
   factory :merchant_order, class: 'Merchant::Order' do
+    amount { '1000' }
   end
 end

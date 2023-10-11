@@ -1,0 +1,4 @@
+merchant_reference;amount;created_at
+test_reference-1;100.00;2022-10-07
+;some text;2022-10-07
+test_reference-3;300.00;2022-10-07

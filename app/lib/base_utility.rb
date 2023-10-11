@@ -1,6 +1,4 @@
 # frozen_string_literal: true
-
-module Utilities
   module BaseUtility
     module ClassMethods
       def call(*args, **kwargs)
@@ -23,4 +21,3 @@ module Utilities
       self
     end
   end
-end

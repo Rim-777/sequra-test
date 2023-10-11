@@ -1,2 +1,3 @@
-errors:
-  invalid_format: 'invalid format'
+en:
+  errors:
+    invalid_format: 'invalid format'
