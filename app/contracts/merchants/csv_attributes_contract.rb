@@ -14,5 +14,6 @@ module Merchants
 
     rule(%i[attributes live_on]).validate(format: RegExp::DATE_YYYY_MM_DD)
     rule(%i[attributes minimum_monthly_fee]).validate(format: RegExp::AMOUNT)
+    rule(%i[attributes disbursement_frequency]).validate(format: RegExp::DISBURSEMENT_FREQUENCY)
   end
 end

@@ -1,0 +1,4 @@
+reference;email;live_on;disbursement_frequency;minimum_monthly_fee
+test_reference-1;test@email-1.com;2022-10-07;DAILY;100.0
+test_reference-2;test@email-2.com;2022-12-01;DAILY;200.0
+test_reference-3;test@email-3.com;2022-10-09;WEEKLY;300.0
