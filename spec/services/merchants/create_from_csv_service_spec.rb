@@ -11,6 +11,8 @@ RSpec.describe Merchants::CreateFromCsvService do
     context 'success' do
       let(:file_path) { Rails.root.join('spec', 'support', 'files', 'merchants_test_success.csv').to_s }
 
+      include_examples 'services/common/success'
+
       it 'properly parses the csv file' do
         expect { service }.to change(Merchant, :count).by(3)
       end
@@ -89,13 +91,7 @@ RSpec.describe Merchants::CreateFromCsvService do
         ]
       end
 
-      it 'looks like failure' do
-        expect(service).to be_failure
-      end
-
-      it 'contains errors' do
-        expect(service.errors).to eq(expected_errors)
-      end
+      include_examples 'services/common/failure'
     end
   end
 end
