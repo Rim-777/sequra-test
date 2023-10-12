@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 shared_examples_for 'services/common/failure' do
   it 'looks like failure' do
     expect(service).to be_failure
