@@ -10,8 +10,7 @@ module Disbursements
 
     def call
       set_undisbursed_merchant_orders
-      calculate_amount_and_fees
-      create_disbursement!
+      calculate_and_create_disbursement!
     end
 
     private
@@ -21,13 +20,14 @@ module Disbursements
         Merchants::Orders::GetUndisbursedService.call(merchant: @merchant).results
     end
 
-    def calculate_amount_and_fees
+    def calculate_and_create_disbursement!
       return if no_orders_found?
 
       calculate_gross_amount
       calculate_fee
       calculate_monthly_fee
       calculate_final_amount
+      create_disbursement!
     end
 
     def calculate_gross_amount
@@ -47,8 +47,6 @@ module Disbursements
     end
 
     def create_disbursement!
-      return if no_orders_found?
-
       @disbursement = Disbursement.new(amount: @final_amount, fee: @fee, monthly_fee: @monthly_fee)
       @disbursement.merchant_orders = @undisbursed_merchant_orders
       @disbursement.save!

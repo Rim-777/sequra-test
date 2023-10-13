@@ -4,6 +4,7 @@ require 'rails_helper'
 
 RSpec.describe Merchant, type: :model do
   it { should have_many(:merchant_orders).inverse_of(:merchant).dependent(:destroy) }
+  it { should have_many(:disbursements).through(:merchant_orders) }
   it { should validate_presence_of(:email) }
   it { should validate_presence_of(:started_at) }
   it { should validate_presence_of(:disbursement_frequency) }
