@@ -28,10 +28,7 @@ module Disbursements
     end
 
     def started_merchants
-      @started_merchants ||=
-        Merchant
-          .includes(:merchant_orders)
-          .where('started_at <= ?', Time.current)
+      @started_merchants ||= Merchant.where('started_at <= ?', Time.current)
     end
   end
 end
