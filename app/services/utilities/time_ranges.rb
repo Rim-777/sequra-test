@@ -24,15 +24,20 @@ module Utilities
     end
 
     def beginning_of_last_month
-      last_month.beginning_of_month.beginning_of_day
+      last_month.beginning_of_month
     end
 
     def end_of_last_month
-      last_month.end_of_month.end_of_day
+      last_month.end_of_month
     end
 
     def last_month_range
       beginning_of_last_month..end_of_last_month
+    end
+
+    def current_month_range
+      time_current = Time.current
+      time_current.beginning_of_month..time_current.end_of_month
     end
   end
 end

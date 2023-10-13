@@ -6,6 +6,8 @@ class Merchant < ApplicationRecord
            inverse_of: :merchant,
            dependent: :destroy
 
+  has_many :disbursements, -> { distinct }, through: :merchant_orders
+
   validates :email,
             :started_at,
             :disbursement_frequency,

@@ -19,7 +19,7 @@ module Merchants
 
     def init_monthly_fee
       @monthly_fee = 0.0
-      exit! if @merchant.started_at > Utilities::TimeRanges.end_of_last_month
+      exit! if merchant_recently_started? || monthly_fee_paid?
     end
 
     def set_previous_month_amount
@@ -37,6 +37,17 @@ module Merchants
     def set_monthly_fee
       difference = @merchant.minimum_monthly_fee - @prev_month_fee
       @monthly_fee = difference if difference.positive?
+    end
+
+    def merchant_recently_started?
+      @merchant.started_at > Utilities::TimeRanges.end_of_last_month
+    end
+
+    def monthly_fee_paid?
+      @merchant
+        .disbursements
+        .where(created_at: Utilities::TimeRanges.current_month_range)
+        .where.not(monthly_fee: 0.0).any?
     end
   end
 end
