@@ -4,7 +4,8 @@ class Disbursement < ApplicationRecord
   has_many :merchant_orders_disbursements,
            class_name: 'Merchant::OrdersDisbursement',
            inverse_of: :disbursement,
-           dependent: :destroy
+           dependent: :destroy,
+           foreign_key: :disbursement_id
 
   has_many :merchant_orders,
            class_name: 'Merchant::Order',

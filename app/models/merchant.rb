@@ -4,7 +4,8 @@ class Merchant < ApplicationRecord
   has_many :merchant_orders,
            class_name: 'Merchant::Order',
            inverse_of: :merchant,
-           dependent: :destroy
+           dependent: :destroy,
+           foreign_key: :merchant_id
 
   has_many :disbursements, -> { distinct }, through: :merchant_orders
 

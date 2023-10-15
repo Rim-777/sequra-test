@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class Merchant::OrdersDisbursement < ApplicationRecord
   belongs_to :merchant_order,
              class_name: 'Merchant::Order',
@@ -6,7 +7,8 @@ class Merchant::OrdersDisbursement < ApplicationRecord
              foreign_key: :merchant_order_id
   belongs_to :disbursement,
              class_name: 'Disbursement',
-             inverse_of: :merchant_orders_disbursements
+             inverse_of: :merchant_orders_disbursements,
+             foreign_key: :disbursement_id
 
   validates :merchant_order_id, uniqueness: { scope: :disbursement_id }
 end
