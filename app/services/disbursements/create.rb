@@ -9,8 +9,15 @@ module Disbursements
     attr_reader :disbursement
 
     def call
-      set_undisbursed_merchant_orders
-      calculate_and_create_disbursement!
+      ActiveRecord::Base.transaction do
+        ActiveRecord::Base.connection.execute(<<~SQL).clear
+          lock merchant_orders in share row exclusive mode;
+          lock merchant_orders_disbursements in share row exclusive mode;
+          lock disbursements in share row exclusive mode;
+        SQL
+        set_undisbursed_merchant_orders
+        calculate_and_create_disbursement!
+      end
     end
 
     private
