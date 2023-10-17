@@ -8,8 +8,23 @@ RSpec.describe Merchants::Orders::CreateFromCsvService do
   end
 
   describe '#call' do
-    let(:merchants_scv_file_path) { Rails.root.join('spec', 'support', 'files', 'merchants_test_success.csv').to_s }
-    let(:orders_scv_file_path) { Rails.root.join('spec', 'support', 'files', 'orders_test_success.csv').to_s }
+    let(:merchants_scv_file_path) do
+      Rails.root.join(
+        'spec',
+        'support',
+        'files',
+        'merchants_test_success.csv'
+      ).to_s
+    end
+
+    let(:orders_scv_file_path) do
+      Rails.root.join(
+        'spec',
+        'support',
+        'files',
+        'orders_test_success.csv'
+      ).to_s
+    end
 
     context 'success' do
       let(:created_merchant_orders) { Merchant::Order.all }
@@ -73,7 +88,9 @@ RSpec.describe Merchants::Orders::CreateFromCsvService do
       end
 
       context 'invalid csv' do
-        let(:orders_scv_file_path) { Rails.root.join('spec', 'support', 'files', 'orders_test_failure.csv').to_s }
+        let(:orders_scv_file_path) do
+          Rails.root.join('spec', 'support', 'files', 'orders_test_failure.csv').to_s
+        end
 
         let(:expected_errors) do
           [

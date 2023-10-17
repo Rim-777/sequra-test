@@ -3,11 +3,13 @@
 require 'rails_helper'
 
 RSpec.describe Merchants::CalculateMonthlyFeeService do
-  let(:service_object) { described_class.new(merchant:, perform_datetime: Time.current) }
+  let(:service_object) { described_class.new(merchant:, perform_datetime:) }
 
   subject(:service) do
     service_object.call
   end
+
+  let(:perform_datetime) { Time.current }
 
   describe '.call' do
     shared_examples :zero_monthly_fee do
@@ -24,7 +26,7 @@ RSpec.describe Merchants::CalculateMonthlyFeeService do
     end
 
     context 'recently started merchant' do
-      let(:merchant) { create(:merchant, started_at: Date.today.beginning_of_month) }
+      let(:merchant) { create(:merchant, started_at: perform_datetime.beginning_of_month) }
 
       it 'exit at the first step' do
         expect(service_object).to receive(:exit!)
@@ -47,10 +49,12 @@ RSpec.describe Merchants::CalculateMonthlyFeeService do
 
       context 'minimum monthly fee reached' do
         before do
-          create_list(:merchant_order, 2,
-                      amount: 5000,
-                      merchant:,
-                      created_at: 1.months.ago.end_of_month)
+          create_list(
+            :merchant_order, 2,
+            amount: 5000,
+            merchant:,
+            created_at: 1.months.ago.end_of_month
+          )
         end
 
         include_examples :invokes_all_steps

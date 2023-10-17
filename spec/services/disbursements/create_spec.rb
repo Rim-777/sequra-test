@@ -3,10 +3,12 @@
 require 'rails_helper'
 
 RSpec.describe Disbursements::Create do
-  let(:service_object) { described_class.new(merchant:, perform_datetime: Time.current) }
+  let(:service_object) { described_class.new(merchant:, perform_datetime:) }
   subject(:service) do
     service_object.call
   end
+
+  let(:perform_datetime) { Time.current }
 
   describe '.call' do
     let!(:merchant) do
@@ -48,7 +50,7 @@ RSpec.describe Disbursements::Create do
           :merchant_order, 2,
           merchant:,
           amount: 1000,
-          created_at: Time.current
+          created_at: perform_datetime
         )
       end
 
@@ -57,7 +59,7 @@ RSpec.describe Disbursements::Create do
           :merchant_order, 2,
           merchant:,
           amount: 1000,
-          created_at: Time.current.yesterday
+          created_at: perform_datetime.yesterday
         )
       end
 
@@ -66,7 +68,7 @@ RSpec.describe Disbursements::Create do
           :merchant_order, 2,
           merchant:,
           amount: 1000,
-          created_at: Time.current.last_week.end_of_week
+          created_at: perform_datetime.last_week.end_of_week
         )
       end
 
@@ -74,7 +76,7 @@ RSpec.describe Disbursements::Create do
         create(
           :disbursement,
           monthly_fee: 100,
-          created_at: Time.current.beginning_of_month
+          created_at: perform_datetime.beginning_of_month
         )
       end
 
@@ -134,7 +136,7 @@ RSpec.describe Disbursements::Create do
           :merchant_order, 2,
           merchant:,
           amount: 1000,
-          created_at: Time.current.beginning_of_week
+          created_at: perform_datetime.beginning_of_week
         )
       end
 
@@ -143,7 +145,7 @@ RSpec.describe Disbursements::Create do
           :merchant_order, 2,
           merchant:,
           amount: 1000,
-          created_at: Time.current.last_week.end_of_week
+          created_at: perform_datetime.last_week.end_of_week
         )
       end
 
@@ -152,7 +154,7 @@ RSpec.describe Disbursements::Create do
           :merchant_order, 2,
           merchant:,
           amount: 1000,
-          created_at: Time.current.last_month.end_of_month
+          created_at: perform_datetime.last_month.end_of_month
         )
       end
 
@@ -199,7 +201,7 @@ RSpec.describe Disbursements::Create do
         create(
           :merchant_order,
           merchant:,
-          created_at: Time.current.yesterday
+          created_at: perform_datetime.yesterday
         )
         allow(Disbursement).to receive(:new).and_return(invalid_disbursement)
       end

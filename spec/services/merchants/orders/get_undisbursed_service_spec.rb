@@ -4,20 +4,20 @@ require 'rails_helper'
 
 RSpec.describe Merchants::Orders::GetUndisbursedService do
   subject(:service) do
-    described_class.new(merchant:, perform_datetime: current_time)
+    described_class.new(merchant:, perform_datetime:)
   end
 
-  let(:current_time) { Time.current }
+  let(:perform_datetime) { Time.current }
 
   let!(:merchant) { create(:merchant, :weekly_disbursed) }
 
   describe '#call' do
     let!(:last_week_merchant_order) do
-      create(:merchant_order, merchant:, created_at: current_time.last_week)
+      create(:merchant_order, merchant:, created_at: perform_datetime.last_week)
     end
 
     let!(:disbursed_last_week_merchant_order) do
-      create(:merchant_order, merchant:, created_at: current_time.last_week)
+      create(:merchant_order, merchant:, created_at: perform_datetime.last_week)
     end
 
     let!(:disbursement) { create(:disbursement) }
@@ -30,7 +30,7 @@ RSpec.describe Merchants::Orders::GetUndisbursedService do
 
     context 'weekly disbursement' do
       let!(:this_week_merchant_order) do
-        create(:merchant_order, merchant:, created_at: current_time.beginning_of_week)
+        create(:merchant_order, merchant:, created_at: perform_datetime.beginning_of_week)
       end
 
       before do
@@ -45,15 +45,27 @@ RSpec.describe Merchants::Orders::GetUndisbursedService do
     context 'daily disbursement' do
       let!(:merchant) { create(:merchant, :daily_disbursed) }
       let!(:yesterday_beginning_merchant_order) do
-        create(:merchant_order, merchant:, created_at: current_time.yesterday.beginning_of_day)
+        create(
+          :merchant_order,
+          merchant:,
+          created_at: perform_datetime.yesterday.beginning_of_day
+        )
       end
 
       let!(:yesterday_end_merchant_order) do
-        create(:merchant_order, merchant:, created_at: current_time.yesterday.end_of_day)
+        create(
+          :merchant_order,
+          merchant:,
+          created_at: perform_datetime.yesterday.end_of_day
+        )
       end
 
       let!(:disbursed_yesterday_end_merchant_order) do
-        create(:merchant_order, merchant:, created_at: current_time.yesterday.end_of_day)
+        create(
+          :merchant_order,
+          merchant:,
+          created_at: perform_datetime.yesterday.end_of_day
+        )
       end
 
       before do

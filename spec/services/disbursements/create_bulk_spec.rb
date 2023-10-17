@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe Disbursements::CreateBulk do
-  let(:service_object) { described_class.new(perform_datetime: Time.current) }
+  let(:service_object) { described_class.new(perform_datetime:) }
   subject(:service) do
     service_object.call
   end
