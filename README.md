@@ -61,7 +61,7 @@ To execute automation tests, run following commands:
 
 ### Explanation of the approach:
 Service Oriented Architecture (SOA) modular design with step-based operations. 
-For Rails application I follow the idea that models inherit ActiveRecord, which means they have to conform 
+For Rails applications I follow the idea that models inherit ActiveRecord, which means they have to conform 
 ORM pattern only and should not contain any other business logic aside from Object Oriented Mapping(recording).
 That's why models contain only associations and record validations.
 With that I prefer to keep models as stupid as possible, which means: no callbacks in models. 
@@ -83,6 +83,12 @@ seem to be like one-time-use and may need to be archived, for now they are kept 
 |:-----------:|:-------------------------:|:-----------------------------:|:--------------------:|:------------------------------:|:-----------------------------:|
 |    2022     |           1435            |         15916530.48 €         |     136484.21 €      |              111               |           1845.42 €           |
 |    2023     |           1056            |         18117463.13 €         |     155351.17 €      |              85                |           1697.43 €           |
-### License
 
+
+
+### TODO: 
+- Currently parsing of `orders.csv` allocate memory with a spike 425 MB even though the the reading goes line by line.
+ We should look for the solution by splitting large scv file into multiple files first. 
+
+### License
 The software is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
