@@ -11,10 +11,10 @@ module Merchants
     def call
       @fee =
         case @amount
-        when ->(a) { a < 50 } then (@amount * 0.01).round(2)
-        when ->(a) { a >= 50 && a <= 300 } then (@amount * 0.0095).round(2)
-        when ->(a) { a > 300 } then (@amount * 0.0085).round(2)
-        end
+        when ->(a) { a < 50 } then (@amount * 0.01)
+        when ->(a) { a >= 50 && a <= 300 } then (@amount * 0.0095)
+        when ->(a) { a > 300 } then (@amount * 0.0085)
+        end.round(2)
     end
   end
 end

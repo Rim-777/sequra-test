@@ -69,8 +69,16 @@ RSpec.describe Merchants::CreateFromCsvService do
           )
       end
     end
+
     context 'failure' do
-      let(:file_path) { Rails.root.join('spec', 'support', 'files', 'merchants_test_failure.csv').to_s }
+      let(:file_path) do
+        Rails.root.join(
+          'spec',
+          'support',
+          'files',
+          'merchants_test_failure.csv'
+        ).to_s
+      end
 
       let(:expected_errors) do
         [

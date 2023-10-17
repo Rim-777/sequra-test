@@ -14,8 +14,8 @@ RSpec.describe Utilities::TimeRanges do
 
     it 'returns a correct time range' do
       expect(result).to be_a(Range)
-      expect(result.first).to eq(Date.yesterday.beginning_of_day)
-      expect(result.last).to eq(Date.yesterday.end_of_day)
+      expect(result.first).to eq(current_time.yesterday.beginning_of_day)
+      expect(result.last).to eq(current_time.yesterday.end_of_day)
     end
   end
 
@@ -32,7 +32,7 @@ RSpec.describe Utilities::TimeRanges do
 
   describe '.last_month_range_for' do
     let(:result) { utility.last_month_range_for(date: current_time) }
-    let(:last_month) { Date.today.last_month }
+    let(:last_month) { current_time.last_month }
 
     it 'returns a correct time range' do
       expect(result).to be_a(Range)
