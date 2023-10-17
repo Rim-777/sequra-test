@@ -1,0 +1,4 @@
+disburse_orders_job:
+  cron: '0 8 * * *'
+  class: DisburseMerchantOrdersBulkJob
+  queue: bulk_disbursement

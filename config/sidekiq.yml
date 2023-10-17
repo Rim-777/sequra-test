@@ -1,0 +1,6 @@
+:queues:
+  - default
+  - bulk_disbursement
+:limits:
+  default: 10
+  bulk_disbursement: 1
