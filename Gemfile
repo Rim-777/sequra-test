@@ -8,6 +8,7 @@ gem 'rails', '~> 7.0.8'
 gem 'redis', '~> 4.0'
 gem 'sidekiq', '~> 7.1', '>= 7.1.4'
 gem 'sidekiq-cron', '~> 1.10', '>= 1.10.1'
+gem 'sidekiq-limit_fetch', '~> 4.4', '>= 4.4.1'
 
 gem 'bcrypt', '~> 3.1.7'
 gem 'bootsnap', require: false

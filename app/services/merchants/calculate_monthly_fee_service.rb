@@ -5,6 +5,10 @@ module Merchants
     prepend BaseOperation
 
     option :merchant, type: Types.Instance(Merchant)
+    option :perform_datetime,
+           type: Types::Strict::Date |
+                 Types::Strict::DateTime |
+                 Types::Strict::Time
 
     attr_reader :monthly_fee
 
@@ -26,7 +30,7 @@ module Merchants
       @prev_month_amount =
         @merchant
         .merchant_orders
-        .where(created_at: Utilities::TimeRanges.last_month_range)
+        .where(created_at: Utilities::TimeRanges.last_month_range_for(date: @perform_datetime))
         .sum(:amount)
     end
 
@@ -40,13 +44,13 @@ module Merchants
     end
 
     def merchant_recently_started?
-      @merchant.started_at > Utilities::TimeRanges.end_of_last_month
+      @merchant.started_at > Utilities::TimeRanges.end_of_last_month_for(date: @perform_datetime)
     end
 
     def monthly_fee_paid?
       @merchant
         .disbursements
-        .where(created_at: Utilities::TimeRanges.current_month_range)
+        .where(created_at: Utilities::TimeRanges.current_month_range_for(date: @perform_datetime))
         .where.not(monthly_fee: 0.0).any?
     end
   end

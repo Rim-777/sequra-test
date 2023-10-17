@@ -3,9 +3,15 @@
 require 'rails_helper'
 
 RSpec.describe Disbursements::CreateBulk do
-  let(:service_object) { described_class.new }
+  let(:service_object) { described_class.new(perform_datetime: Time.current) }
   subject(:service) do
     service_object.call
+  end
+
+  let!(:perform_datetime) { Time.current }
+
+  before do
+    allow(Time).to receive(:current).and_return(perform_datetime)
   end
 
   describe '.call' do
@@ -32,7 +38,7 @@ RSpec.describe Disbursements::CreateBulk do
 
     before do
       same_weekday_weekly_disbursed_merchants.each do |merchant|
-        merchant.merchant_orders.create!(amount: 1000, created_at: 6.days.ago)
+        merchant.merchant_orders.create!(amount: 1000, created_at: 7.days.ago)
       end
 
       daily_disbursed_merchants.each do |merchant|
@@ -46,15 +52,12 @@ RSpec.describe Disbursements::CreateBulk do
     end
 
     it 'invokes Disbursements::Create expected number of times' do
-      expect(Disbursements::Create).to receive(:call).exactly(5).times.and_call_original
+      expect(DisburseMerchantOrdersByMerchantJob)
+        .to receive(:perform_later)
+        .exactly(5).times
+        .with(a_hash_including(perform_datetime:))
+        .and_call_original
       service
-    end
-
-    it 'creates an expected number of disbursements' do
-      allow(Disbursements::GetTargetMerchantsService)
-        .to receive(:call)
-        .and_return(get_target_merchants_service)
-      expect { service }.to change(Disbursement, :count).by(5)
     end
   end
 end

@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe Disbursements::GetTargetMerchantsService do
-  let(:service_object) { described_class.new }
+  let(:service_object) { described_class.new(perform_datetime: Time.current) }
 
   subject(:service) do
     service_object.call
@@ -21,25 +21,48 @@ RSpec.describe Disbursements::GetTargetMerchantsService do
     )
   end
 
+  let(:daily_disbursed_merchant) do
+    create(
+      :merchant,
+      started_at: 10.months.ago,
+      disbursement_frequency: CommonConstants::DAILY
+    )
+  end
+
+  let(:today_created_order) do
+    create(:merchant_order, merchant: daily_disbursed_merchant, created_at: Time.current)
+  end
+
   let(:same_weekday_weekly_disbursed_merchants) do
     create_list(
       :merchant, 2,
-      disbursement_frequency: CommonConstants::WEEKLY, started_at: 7.days.ago
+      disbursement_frequency: CommonConstants::WEEKLY, started_at: 7.days.ago.end_of_day
     )
   end
 
   let(:some_weekday_weekly_disbursed_merchants) do
     create_list(
       :merchant, 2,
-      disbursement_frequency: CommonConstants::WEEKLY, started_at: 9.days.ago
+      disbursement_frequency: CommonConstants::WEEKLY, started_at: 9.days.ago.end_of_day
     )
   end
 
   shared_context :create_merchant do
     before do
-      daily_disbursed_merchants
-      some_weekday_weekly_disbursed_merchants
-      same_weekday_weekly_disbursed_merchants
+      daily_disbursed_merchants.each do |merchant|
+        create(:merchant_order, merchant:, created_at: Time.current.yesterday.end_of_day)
+      end
+
+      some_weekday_weekly_disbursed_merchants.each do |merchant|
+        create(:merchant_order, merchant:, created_at: 9.days.ago.beginning_of_week)
+      end
+
+      same_weekday_weekly_disbursed_merchants.each do |merchant|
+        create(:merchant_order, merchant:, created_at: 7.days.ago.beginning_of_week)
+      end
+
+      daily_disbursed_merchant
+      today_created_order
     end
   end
 
@@ -68,7 +91,7 @@ RSpec.describe Disbursements::GetTargetMerchantsService do
   describe '#weekly_disbursed_merchants' do
     include_context :create_merchant
 
-    it 'returns weekly merchants only registered on the same weekday' do
+    it 'returns exactly weekly merchants only registered on the same weekday' do
       expect(
         service_object.send(:weekly_disbursed_merchants)
       ).to eq(same_weekday_weekly_disbursed_merchants)

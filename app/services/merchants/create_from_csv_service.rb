@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'English'
 require 'csv'
 
 module Merchants
@@ -21,7 +22,7 @@ module Merchants
       @bulk_merchant_attributes ||= {}
 
       CSV.foreach(@file_path, **CSV_OPTIONS) do |row|
-        exit! if row_invalid?(contract_class: Merchants::CsvAttributesContract, line_num: $., row:)
+        exit! if row_invalid?(contract_class: Merchants::CsvAttributesContract, line_num: $INPUT_LINE_NUMBER, row:)
 
         @bulk_merchant_attributes[row.fetch(:reference)] =
           {

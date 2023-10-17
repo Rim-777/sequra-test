@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'English'
 module Merchants
   module Orders
     class CreateFromCsvService
@@ -30,13 +31,18 @@ module Merchants
       def parse_orders_csv!
         CSV.foreach(@orders_scv_file_path, **CSV_OPTIONS) do |row|
           exit! if row_invalid?(
-            contract_class: MerchantOrders::CsvAttributesContract, line_num: $., row:
+            contract_class: MerchantOrders::CsvAttributesContract,
+            line_num: $INPUT_LINE_NUMBER,
+            row:
           )
 
           merchant_reference = row.fetch(:merchant_reference)
           merchant_email = @merchant_attributes.fetch(merchant_reference).fetch(:email)
           merchant = Merchant.find_by!(email: merchant_email)
-          merchant.merchant_orders.create!(amount: row.fetch(:amount))
+          merchant.merchant_orders.create!(
+            amount: row.fetch(:amount),
+            created_at: row.fetch(:created_at)
+          )
         end
       end
     end

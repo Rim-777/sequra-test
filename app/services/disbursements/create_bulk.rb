@@ -4,24 +4,30 @@ module Disbursements
   class CreateBulk
     prepend BaseOperation
 
+    option :perform_datetime,
+           type: Types::Strict::Date |
+                 Types::Strict::DateTime |
+                 Types::Strict::Time
+
     def call
-      set_target_merchants
-      disburse_merchants!
+      ActiveRecord::Base.transaction do
+        ActiveRecord::Base.connection.execute(<<~SQL).clear
+          lock merchants in access exclusive mode;
+        SQL
+        set_target_merchants
+        disburse_merchants!
+      end
     end
 
     private
 
     def set_target_merchants
-      @target_merchants = GetTargetMerchantsService.call.results
+      @target_merchants = GetTargetMerchantsService.call(perform_datetime: @perform_datetime).results
     end
 
     def disburse_merchants!
       @target_merchants.find_each do |merchant|
-        disbursement_create_service = Disbursements::Create.call(merchant:)
-
-        next if disbursement_create_service.success?
-
-        fail!(disbursement_create_service.errors)
+        DisburseMerchantOrdersByMerchantJob.perform_later(perform_datetime: @perform_datetime, merchant:)
       end
     end
   end

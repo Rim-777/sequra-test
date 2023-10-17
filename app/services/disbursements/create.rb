@@ -5,15 +5,17 @@ module Disbursements
     prepend BaseOperation
 
     option :merchant, type: Types.Instance(Merchant)
+    option :perform_datetime,
+           type: Types::Strict::Date |
+                 Types::Strict::DateTime |
+                 Types::Strict::Time
 
     attr_reader :disbursement
 
     def call
       ActiveRecord::Base.transaction do
         ActiveRecord::Base.connection.execute(<<~SQL).clear
-          lock merchant_orders in share row exclusive mode;
-          lock merchant_orders_disbursements in share row exclusive mode;
-          lock disbursements in share row exclusive mode;
+          lock merchant_orders in access exclusive mode;
         SQL
         set_undisbursed_merchant_orders
         calculate_and_create_disbursement!
@@ -24,7 +26,10 @@ module Disbursements
 
     def set_undisbursed_merchant_orders
       @undisbursed_merchant_orders =
-        Merchants::Orders::GetUndisbursedService.call(merchant: @merchant).results
+        Merchants::Orders::GetUndisbursedService.call(
+          merchant: @merchant,
+          perform_datetime: @perform_datetime
+        ).results
     end
 
     def calculate_and_create_disbursement!
@@ -46,7 +51,10 @@ module Disbursements
     end
 
     def calculate_monthly_fee
-      @monthly_fee = Merchants::CalculateMonthlyFeeService.call(merchant: @merchant).monthly_fee
+      @monthly_fee = Merchants::CalculateMonthlyFeeService.call(
+        merchant: @merchant,
+        perform_datetime: @perform_datetime
+      ).monthly_fee
     end
 
     def calculate_final_amount
@@ -54,7 +62,14 @@ module Disbursements
     end
 
     def create_disbursement!
-      @disbursement = Disbursement.new(amount: @final_amount, fee: @fee, monthly_fee: @monthly_fee)
+      @disbursement =
+        Disbursement.new(
+          amount: @final_amount,
+          fee: @fee,
+          monthly_fee: @monthly_fee,
+          perform_datetime: @perform_datetime
+        )
+
       @disbursement.merchant_orders = @undisbursed_merchant_orders
       @disbursement.save!
     rescue ActiveRecord::RecordInvalid => e

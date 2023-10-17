@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe Merchants::CalculateMonthlyFeeService do
-  let(:service_object) { described_class.new(merchant:) }
+  let(:service_object) { described_class.new(merchant:, perform_datetime: Time.current) }
 
   subject(:service) do
     service_object.call
